@@ -32,7 +32,7 @@ const LoginModule = {
             await db.query('LOCK TABLES User WRITE, Student READ, Staff READ');
 
             await db.query(
-                'UPDATE User SET LastLogin = NOW(), isActive = TRUE WHERE UserID = ?',
+                'UPDATE User SET LastLogin = NOW() WHERE UserID = ?',
                 [user.UserID]
             );
 

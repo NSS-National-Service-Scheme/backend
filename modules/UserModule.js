@@ -129,6 +129,30 @@ const UserModule = {
             db.release();
         }
     },
+
+     isActive: async (UserID) => {
+        const db = await pool.getConnection();
+        try {
+            await db.query('LOCK TABLES User READ');
+            const [results] = await db.query(
+                'SELECT isActive FROM User WHERE UserID = ?',
+                [UserID]
+            );
+            await db.query('UNLOCK TABLES');
+
+            if (results.length === 0) {
+                return setResponseBadRequest("User not found.");
+            }
+
+            return setResponseOk("User active status fetched successfully", results[0].isActive);
+        } catch (error) {
+            await db.query('UNLOCK TABLES');
+            return setResponseInternalError({ error: error.message });
+        } finally {
+            db.release();
+        }
+    },
+
 };
 
 export default UserModule;

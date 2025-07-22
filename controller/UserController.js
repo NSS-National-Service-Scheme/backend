@@ -99,6 +99,21 @@ const UserController = {
                 .json(response.responseBody);
         }
     },
+
+    isActiveUser: async (req, res) => {
+        const userId = req.params.UserId;
+        try {
+            const response = await UserModule.isActiveUser(userId);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        } catch (error) {
+            const response = setResponseInternalError({ error: error.message });
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        }
+    },
 };
 
 export default UserController;

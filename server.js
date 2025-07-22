@@ -13,9 +13,19 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 import loginRoutes from './routes/loginRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import profileRoutes from './routes/ProfileRoutes.js';
+import eventRoutes from './routes/eventRoutes.js';
+import eventCoordRoutes from './routes/EventCoordRoutes.js';
+import expenseRoutes from './routes/ExpenseRoutes.js';
+//Usage of routes
 
+
+app.use('/api', profileRoutes);
 app.use('/api', loginRoutes);
 app.use('/api', userRoutes);
+app.use('/api', eventRoutes);
+app.use('/api', eventCoordRoutes);
+app.use('/api', expenseRoutes);
 
 app.listen(appConfig.PORT, () => {
     console.log(`Server is running on port ${appConfig.PORT}`);
