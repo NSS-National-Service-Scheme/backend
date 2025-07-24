@@ -32,7 +32,7 @@ const ProfileController = {
                 let {
                     RollNo, Name, Sex, Community, Aadhar, Minority_Community,
                     SchoolID, DeptID, MobileNo, YearOfAdmission, Branch, PersonalEmail,
-                    GaurdianName, HostelOrDayScholar
+                    GaurdianName, HostelOrDayScholar , DOB , Blood_Group ,Address,ImageURL
                 } = req.body;
                 console.log(req.body);
                 RollNo = RollNo?.trim().toUpperCase();
@@ -49,6 +49,7 @@ const ProfileController = {
                 PersonalEmail = PersonalEmail?.trim();
                 GaurdianName = GaurdianName?.trim();
                 HostelOrDayScholar = HostelOrDayScholar?.trim();
+                
 
                 const validationError = validateStudentData(RollNo, Name, Sex, Community, Aadhar, Minority_Community,
                     SchoolID, DeptID, MobileNo, YearOfAdmission, Branch, PersonalEmail,
