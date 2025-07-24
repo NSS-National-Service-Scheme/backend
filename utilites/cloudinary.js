@@ -26,8 +26,6 @@ export const uploadImage = async (filePath) => {
         return result.secure_url;
     } catch (err) {
         console.error('Cloudinary upload failed:', err);
-        throw  err;
+        throw err;
     }
 };
-
-

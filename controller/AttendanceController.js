@@ -1,5 +1,11 @@
 import AttendanceModule from '../modules/AttendanceModule.js';
-import { validateNewAttendanceData } from '../utilites/dataValidator/Attendance';
+import { validateNewAttendanceData } from '../utilites/dataValidator/Attendance.js';
+import {
+    setResponseInternalError,
+    setResponseUnauth,
+    setResponseOk,
+    setResponseBadRequest,
+} from '../utilites/response.js';
 const AttendanceController = {
     addAttendance: async (req, res) => {
         try {
@@ -15,6 +21,7 @@ const AttendanceController = {
                     .status(response.responseCode)
                     .json(response.responseBody);
             }
+            console.log('Entered');
             const result = await AttendanceModule.addAttedance(
                 EventID,
                 StudentID,
@@ -22,7 +29,7 @@ const AttendanceController = {
             );
             return res.status(result.responseCode).json(result.responseBody);
         } catch (error) {
-            const response = setResponseInternalError({ error: error.message });
+            response = setResponseInternalError({ error: error.message });
             return res
                 .status(response.responseCode)
                 .json(response.responseBody);
@@ -47,22 +54,12 @@ const AttendanceController = {
         try {
             const { AttendanceID } = req.params;
             const { EventID, StudentID, Status } = req.body;
-            const validationError = validateNewAttendanceData(
+
+            const result = await AttendanceModule.updateAttendanceByID(
+                AttendanceID,
                 EventID,
                 StudentID,
                 Status
-            );
-            if (validationError) {
-                const response = setResponseBadRequest(validationError);
-                return res
-                    .status(response.responseCode)
-                    .json(response.responseBody);
-            }
-            const result = await AttendanceModule.updateAttendanceByID(
-                EventID,
-                StudentID,
-                Status,
-                AttendanceID
             );
             return res.status(result.responseCode).json(result.responseBody);
         } catch (error) {

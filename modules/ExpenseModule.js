@@ -1,23 +1,42 @@
+import pool from '../db/connectionPool.js';
+
+import {
+    setResponseInternalError,
+    setResponseUnauth,
+    setResponseOk,
+    setResponseBadRequest,
+} from '../utilites/response.js';
+
 const ExpenseModule = {
     addExpense: async (EventID, Amount, Description, ImageURL) => {
         const db = await pool.getConnection();
         try {
+            console.log('Input:', EventID, Amount, Description, ImageURL);
+
+            EventID = parseInt(EventID);
+            Amount = parseFloat(Amount);
+
             await db.query('LOCK TABLES Expenses WRITE, Events READ');
-            const [results] = await db.query(
+
+            const [eventCheck] = await db.query(
                 'SELECT * FROM Events WHERE EventID = ?',
                 [EventID]
             );
-            if (results.length === 0) {
+            if (eventCheck.length === 0) {
+                await db.query('UNLOCK TABLES');
                 return setResponseBadRequest('Event not found');
             }
-            await db.query(
+
+            const [r] = await db.query(
                 'INSERT INTO Expenses (EventID, Amount, Description, ImageURL) VALUES (?, ?, ?, ?)',
                 [EventID, Amount, Description, ImageURL]
             );
             await db.query('UNLOCK TABLES');
+            console.log('Insert success:', r);
             return setResponseOk('Expense added successfully');
         } catch (error) {
             await db.query('UNLOCK TABLES');
+            console.error('Insert Failed:', error);
             return setResponseInternalError('Failed to add expense');
         } finally {
             db.release();
@@ -34,11 +53,13 @@ const ExpenseModule = {
         const db = await pool.getConnection();
         try {
             await db.query('LOCK TABLES Expenses WRITE, Events READ');
+
             const [results] = await db.query(
                 'SELECT * FROM Expenses WHERE ExpenseID = ?',
                 [ExpenseID]
             );
             if (results.length === 0) {
+                await db.query('UNLOCK TABLES');
                 return setResponseBadRequest('Expense not found');
             }
 
@@ -66,6 +87,7 @@ const ExpenseModule = {
             }
 
             if (fields.length === 0) {
+                await db.query('UNLOCK TABLES');
                 return setResponseBadRequest('No fields to update');
             }
 
@@ -91,6 +113,7 @@ const ExpenseModule = {
                 [ExpenseID]
             );
             if (results.affectedRows === 0) {
+                await db.query('UNLOCK TABLES');
                 return setResponseBadRequest('Expense not found');
             }
             await db.query('UNLOCK TABLES');
@@ -106,15 +129,18 @@ const ExpenseModule = {
     getExpenseById: async (ExpenseID) => {
         const db = await pool.getConnection();
         try {
+            await db.query('LOCK TABLES Expenses READ');
             const [results] = await db.query(
                 'SELECT * FROM Expenses WHERE ExpenseID = ?',
                 [ExpenseID]
             );
+            await db.query('UNLOCK TABLES');
             if (results.length === 0) {
                 return setResponseBadRequest('Expense not found');
             }
             return setResponseOk('Expense retrieved successfully', results[0]);
         } catch (error) {
+            await db.query('UNLOCK TABLES');
             return setResponseInternalError('Failed to retrieve expense');
         } finally {
             db.release();
@@ -124,10 +150,12 @@ const ExpenseModule = {
     getAllExpenses: async (EventID) => {
         const db = await pool.getConnection();
         try {
+            await db.query('LOCK TABLES Expenses READ');
             const [results] = await db.query(
                 'SELECT * FROM Expenses WHERE EventID = ?',
                 [EventID]
             );
+            await db.query('UNLOCK TABLES');
             if (results.length === 0) {
                 return setResponseBadRequest(
                     'No expenses found for this event'
@@ -135,6 +163,7 @@ const ExpenseModule = {
             }
             return setResponseOk('Expenses retrieved successfully', results);
         } catch (error) {
+            await db.query('UNLOCK TABLES');
             return setResponseInternalError('Failed to retrieve expenses');
         } finally {
             db.release();

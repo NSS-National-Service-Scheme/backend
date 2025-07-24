@@ -2,7 +2,12 @@ import { validateDate } from '../utilites/dataValidator/wrkHours.js';
 import WorkingHoursModule from '../modules/WorkingHoursModule.js';
 import { StudentProfileModule } from '../modules/ProfileModule.js';
 import EventCoordModule from '../modules/EventCoordModule.js';
-
+import {
+    setResponseInternalError,
+    setResponseUnauth,
+    setResponseOk,
+    setResponseBadRequest,
+} from '../utilites/response.js';
 import {
     setResponseBadRequest,
     setResponseInternalError,

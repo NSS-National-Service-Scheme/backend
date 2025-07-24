@@ -26,7 +26,7 @@ expenseRouter.get(
 expenseRouter.get(
     '/getAllExpenses',
     authorizeRoles(4),
-    ExpenseController.getExpensesByEvent
+    ExpenseController.getAllExpenses
 );
 
 export default expenseRouter;

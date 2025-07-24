@@ -2,8 +2,14 @@ import {
     setResponseBadRequest,
     setResponseInternalError,
 } from '../utilites/response.js';
-import { StaffProfileModule, StudentProfileModule } from '../modules/ProfileModule.js';
-import { validateStaffData, validateStudentData } from '../utilites/dataValidator/Profile.js';
+import {
+    StaffProfileModule,
+    StudentProfileModule,
+} from '../modules/ProfileModule.js';
+import {
+    validateStaffData,
+    validateStudentData,
+} from '../utilites/dataValidator/Profile.js';
 import { encrypt } from '../utilites/encryption.js';
 import { uploadImage } from '../utilites/cloudinary.js';
 const ProfileController = {
@@ -19,21 +25,48 @@ const ProfileController = {
                 const validationError = validateStaffData(MobileNo, Email);
                 if (validationError) {
                     const response = setResponseBadRequest(validationError);
-                    return res.status(response.responseCode).json(response.responseBody);
+                    return res
+                        .status(response.responseCode)
+                        .json(response.responseBody);
                 }
 
-                const response = await StaffProfileModule.addStaffProfile(req.jwt.UserID, MobileNo, Email);
-                return res.status(response.responseCode).json(response.responseBody);
+                const response = await StaffProfileModule.addStaffProfile(
+                    req.jwt.UserID,
+                    MobileNo,
+                    Email
+                );
+                return res
+                    .status(response.responseCode)
+                    .json(response.responseBody);
             } catch (error) {
-                const response = setResponseInternalError({ error: error.message });
-                return res.status(response.responseCode).json(response.responseBody);
+                const response = setResponseInternalError({
+                    error: error.message,
+                });
+                return res
+                    .status(response.responseCode)
+                    .json(response.responseBody);
             }
         } else {
             try {
                 let {
-                    RollNo, Name, Sex, Community, Aadhar, Minority_Community,
-                    SchoolID, DeptID, MobileNo, YearOfAdmission, Branch, PersonalEmail,
-                    GaurdianName, HostelOrDayScholar , DOB , Blood_Group ,Address,Image
+                    RollNo,
+                    Name,
+                    Sex,
+                    Community,
+                    Aadhar,
+                    Minority_Community,
+                    SchoolID,
+                    DeptID,
+                    MobileNo,
+                    YearOfAdmission,
+                    Branch,
+                    PersonalEmail,
+                    GaurdianName,
+                    HostelOrDayScholar,
+                    DOB,
+                    Blood_Group,
+                    Address,
+                    Image,
                 } = req.body;
                 RollNo = RollNo?.trim().toUpperCase();
                 Name = Name?.trim();
@@ -56,19 +89,38 @@ const ProfileController = {
                 let ImageURL = '';
                 if (Image) {
                     try {
-                        ImageURL = await uploadImage(Image); 
+                        ImageURL = await uploadImage(Image);
                     } catch (err) {
-                        const response = setResponseInternalError({ error: 'Image upload failed' });
-                        return res.status(response.responseCode).json(response.responseBody);
+                        const response = setResponseInternalError({
+                            error: 'Image upload failed',
+                        });
+                        return res
+                            .status(response.responseCode)
+                            .json(response.responseBody);
                     }
                 }
 
-                const validationError = validateStudentData(RollNo, Name, Sex, Community, Aadhar, Minority_Community,
-                    SchoolID, DeptID, MobileNo, YearOfAdmission, Branch, PersonalEmail,
-                    GaurdianName, HostelOrDayScholar);
+                const validationError = validateStudentData(
+                    RollNo,
+                    Name,
+                    Sex,
+                    Community,
+                    Aadhar,
+                    Minority_Community,
+                    SchoolID,
+                    DeptID,
+                    MobileNo,
+                    YearOfAdmission,
+                    Branch,
+                    PersonalEmail,
+                    GaurdianName,
+                    HostelOrDayScholar
+                );
                 if (validationError) {
                     const response = setResponseBadRequest(validationError);
-                    return res.status(response.responseCode).json(response.responseBody);
+                    return res
+                        .status(response.responseCode)
+                        .json(response.responseBody);
                 }
 
                 Community = encrypt(Community);
@@ -76,14 +128,36 @@ const ProfileController = {
                 Minority_Community = encrypt(Minority_Community);
                 MobileNo = encrypt(MobileNo);
                 const response = await StudentProfileModule.addStudentProfile(
-                    req.jwt.UserID, RollNo, Name, Sex, Community, Aadhar, Minority_Community,
-                    SchoolID, DeptID, MobileNo, YearOfAdmission, Branch, PersonalEmail,
-                    GaurdianName, HostelOrDayScholar, DOB , Blood_Group ,Address,ImageURL
+                    req.jwt.UserID,
+                    RollNo,
+                    Name,
+                    Sex,
+                    Community,
+                    Aadhar,
+                    Minority_Community,
+                    SchoolID,
+                    DeptID,
+                    MobileNo,
+                    YearOfAdmission,
+                    Branch,
+                    PersonalEmail,
+                    GaurdianName,
+                    HostelOrDayScholar,
+                    DOB,
+                    Blood_Group,
+                    Address,
+                    ImageURL
                 );
-                return res.status(response.responseCode).json(response.responseBody);
+                return res
+                    .status(response.responseCode)
+                    .json(response.responseBody);
             } catch (error) {
-                const response = setResponseInternalError({ error: error.message });
-                return res.status(response.responseCode).json(response.responseBody);
+                const response = setResponseInternalError({
+                    error: error.message,
+                });
+                return res
+                    .status(response.responseCode)
+                    .json(response.responseBody);
             }
         }
     },
@@ -97,20 +171,40 @@ const ProfileController = {
                 MobileNo = MobileNo?.trim();
                 Email = Email?.trim();
 
-                const response = await StaffProfileModule.UpdateStaffProfile(req.jwt.UserID, MobileNo, Email);
-                return res.status(response.responseCode).json(response.responseBody);
+                const response = await StaffProfileModule.UpdateStaffProfile(
+                    req.jwt.UserID,
+                    MobileNo,
+                    Email
+                );
+                return res
+                    .status(response.responseCode)
+                    .json(response.responseBody);
             } catch (error) {
-                const response = setResponseInternalError({ error: error.message });
-                return res.status(response.responseCode).json(response.responseBody);
+                const response = setResponseInternalError({
+                    error: error.message,
+                });
+                return res
+                    .status(response.responseCode)
+                    .json(response.responseBody);
             }
         } else {
             try {
                 const updateData = { ...req.body };
-                const response = await StudentProfileModule.updateStudentByUserID(req.jwt.UserID, updateData);
-                return res.status(response.responseCode).json(response.responseBody);
+                const response =
+                    await StudentProfileModule.updateStudentByUserID(
+                        req.jwt.UserID,
+                        updateData
+                    );
+                return res
+                    .status(response.responseCode)
+                    .json(response.responseBody);
             } catch (error) {
-                const response = setResponseInternalError({ error: error.message });
-                return res.status(response.responseCode).json(response.responseBody);
+                const response = setResponseInternalError({
+                    error: error.message,
+                });
+                return res
+                    .status(response.responseCode)
+                    .json(response.responseBody);
             }
         }
     },
@@ -120,59 +214,82 @@ const ProfileController = {
         try {
             const { UserID } = req.jwt;
 
-            const response = userType === 'staff'
-                ? await StaffProfileModule.getStaffProfilebyId(UserID)
-                : await StudentProfileModule.getStudentProfileById(UserID);
+            const response =
+                userType === 'staff'
+                    ? await StaffProfileModule.getStaffProfilebyId(UserID)
+                    : await StudentProfileModule.getStudentProfileById(UserID);
 
-            return res.status(response.responseCode).json(response.responseBody);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         } catch (error) {
             const response = setResponseInternalError({ error: error.message });
-            return res.status(response.responseCode).json(response.responseBody);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         }
     },
 
     deleteStudentProfile: async (req, res) => {
         try {
-            const UserID  = req.params.UserID;
-            const response = await StudentProfileModule.deleteStudentProfile(UserID);
-            return res.status(response.responseCode).json(response.responseBody);
+            const UserID = req.params.UserID;
+            const response =
+                await StudentProfileModule.deleteStudentProfile(UserID);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         } catch (error) {
             const response = setResponseInternalError({ error: error.message });
-            return res.status(response.responseCode).json(response.responseBody);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         }
     },
 
     deleteStaffProfile: async (req, res) => {
         try {
-            const UserID  = req.params.UserID;
+            const UserID = req.params.UserID;
             console.log(UserID);
-            const response = await StaffProfileModule.deleteStaffProfile(UserID);
-            return res.status(response.responseCode).json(response.responseBody);
+            const response =
+                await StaffProfileModule.deleteStaffProfile(UserID);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         } catch (error) {
             const response = setResponseInternalError({ error: error.message });
-            return res.status(response.responseCode).json(response.responseBody);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         }
     },
 
-    getAllStudents : async (req, res) => {
+    getAllStudents: async (req, res) => {
         try {
             const response = await StudentProfileModule.getAllStudents();
-            return res.status(response.responseCode).json(response.responseBody);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         } catch (error) {
             const response = setResponseInternalError({ error: error.message });
-            return res.status(response.responseCode).json(response.responseBody);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         }
-    } ,
+    },
 
-    getAllStaffs : async (req, res) => {
+    getAllStaffs: async (req, res) => {
         try {
             const response = await StaffProfileModule.getAllStaffs();
-            return res.status(response.responseCode).json(response.responseBody);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         } catch (error) {
             const response = setResponseInternalError({ error: error.message });
-            return res.status(response.responseCode).json(response.responseBody);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         }
-    }
+    },
 };
 
 export default ProfileController;

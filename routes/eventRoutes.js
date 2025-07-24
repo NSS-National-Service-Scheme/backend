@@ -1,32 +1,28 @@
 import { Router } from 'express';
 import EventController from '../controller/EventController.js';
 import authorizeRoles from '../utilites/auth/authorizeRoles.js';
-const eventController = Router();
+const EventRoutes = Router();
 
-eventController.post(
+EventRoutes.post(
     '/createEvent',
     authorizeRoles(4),
     EventController.createEvent
 );
-eventController.put(
-    '/updateEvent',
-    authorizeRoles(4),
-    EventController.updateEvent
-);
-eventController.delete(
+EventRoutes.put('/updateEvent', authorizeRoles(4), EventController.updateEvent);
+EventRoutes.delete(
     '/deleteEvent',
     authorizeRoles(4),
     EventController.deleteEvent
 );
-eventController.get(
+EventRoutes.get(
     '/getEventbyID',
     authorizeRoles(4),
     EventController.getEventById
 );
-eventController.get(
+EventRoutes.get(
     '/getAllEvents',
     authorizeRoles(4),
     EventController.getAllEvents
 );
 
-export default eventController;
+export default EventRoutes;

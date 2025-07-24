@@ -1,17 +1,37 @@
 import validateExpense from '../utilites/dataValidator/expense.js';
 import ExpenseModule from '../modules/ExpenseModule.js';
+import { uploadImage } from '../utilites/cloudinary.js';
+
+import {
+    setResponseInternalError,
+    setResponseUnauth,
+    setResponseOk,
+    setResponseBadRequest,
+} from '../utilites/response.js';
 const ExpenseController = {
     addExpense: async (req, res) => {
         try {
-            const { EventID, Amount, Description, ImageURL } = req.body;
-            EventID = EventID.trim();
-            Amount = Amount.trim();
-            Description = Description.trim();
-            ImageURL = ImageURL.trim();
+            const { EventID, Amount, Description, Image } = req.body;
+            let ImageURL = '';
+            if (Image) {
+                try {
+                    ImageURL = await uploadImage(Image);
+                } catch (err) {
+                    const response = setResponseInternalError({
+                        error: 'Image upload failed',
+                    });
+                    return res
+                        .status(response.responseCode)
+                        .json(response.responseBody);
+                }
+            }
+            const trimmedEventID = EventID.trim();
+            const trimmedAmount = Amount.trim();
+            const trimmedDescription = Description.trim();
             const validationError = validateExpense(
-                EventID,
-                Amount,
-                Description,
+                trimmedEventID,
+                trimmedAmount,
+                trimmedDescription,
                 ImageURL
             );
 
@@ -21,11 +41,11 @@ const ExpenseController = {
                     .status(response.responseCode)
                     .json(response.responseBody);
             }
-
+            console.log(ImageURL);
             const results = await ExpenseModule.addExpense(
-                EventID,
-                Amount,
-                Description,
+                trimmedEventID,
+                trimmedAmount,
+                trimmedDescription,
                 ImageURL
             );
             return res.status(results.responseCode).json(results.responseBody);
@@ -70,10 +90,10 @@ const ExpenseController = {
         }
     },
 
-    getExpensesByEvent: async (req, res) => {
+    getAllExpenses: async (req, res) => {
         try {
             const { EventID } = req.body;
-            const results = await ExpenseModule.getExpensesByEvent(EventID);
+            const results = await ExpenseModule.getAllExpenses(EventID);
             return res.status(results.responseCode).json(results.responseBody);
         } catch (error) {
             const response = setResponseInternalError(error);

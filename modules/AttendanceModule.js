@@ -7,11 +7,12 @@ import {
 import { validateNewAttendanceData } from '../utilites/dataValidator/Attendance.js';
 const AttedanceModule = {
     addAttedance: async (EventID, StudentID, Status) => {
+        let db;
         try {
-            const db = await pool.getConnection();
+            db = await pool.getConnection();
             db.query('LOCK TABLES EventAttendance WRITE');
             const query =
-                'INSERT INTO Attendance (EventID, StudentID, Status) VALUES (?, ?, ?)';
+                'INSERT INTO EventAttendance (EventID, StudentID, Status) VALUES (?, ?, ?)';
             const results = await db.query(query, [EventID, StudentID, Status]);
             db.query('UNLOCK TABLES');
             return setResponseOk('Attendance added successfully', results);
@@ -26,10 +27,11 @@ const AttedanceModule = {
     },
 
     deleteAttendanceByID: async (AttendanceID) => {
+        let db;
         try {
-            const db = await pool.getConnection();
-            db.query('LOCK TABLES Attendance WRITE');
-            db.query('DELETE FROM Attendance WHERE AttendanceID = ?', [
+            db = await pool.getConnection();
+            db.query('LOCK TABLES EventAttendance WRITE');
+            db.query('DELETE FROM EventAttendance WHERE AttendanceID = ?', [
                 AttendanceID,
             ]);
             db.query('UNLOCK TABLES');
@@ -44,9 +46,10 @@ const AttedanceModule = {
         }
     },
 
-    updateAttendanceByID: async (EventID, StudentID, Status) => {
+    updateAttendanceByID: async (AttendanceID, EventID, StudentID, Status) => {
+        let db;
         try {
-            const db = await pool.getConnection();
+            db = await pool.getConnection();
             const fields = [];
             const values = [];
 
@@ -69,8 +72,9 @@ const AttedanceModule = {
             }
 
             values.push(AttendanceID);
-            db.query('LOCK TABLES Attendance WRITE');
-            const query = `UPDATE Attendance SET ${fields.join(', ')} WHERE AttendanceID = ?`;
+            db.query('LOCK TABLES EventAttendance WRITE');
+            const query = `UPDATE EventAttendance SET ${fields.join(', ')} WHERE AttendanceID = ?`;
+            console.log(query, values);
             await db.query(query, values);
             db.query('UNLOCK TABLES');
             return setResponseOk('Attendance updated successfully');
@@ -85,11 +89,12 @@ const AttedanceModule = {
     },
 
     deleteEventAttendance: async (EventID) => {
+        let db;
         try {
-            const db = await pool.getConnection();
-            db.query('LOCK TABLES Attendance WRITE');
+            db = await pool.getConnection();
+            db.query('LOCK TABLES EventAttendance WRITE');
             const results = await db.query(
-                'DELETE FROM Attendance WHERE EventID = ?',
+                'DELETE FROM EventAttendance WHERE EventID = ?',
                 [EventID]
             );
             if (results.affectedRows === 0) {
@@ -110,11 +115,12 @@ const AttedanceModule = {
     },
 
     getAttendanceByEventID: async (EventID) => {
+        let db;
         try {
-            const db = await pool.getConnection();
-            db.query('LOCK TABLES Attendance READ');
+            db = await pool.getConnection();
+            db.query('LOCK TABLES EventAttendance READ');
             const results = await db.query(
-                'SELECT * FROM Attendance WHERE EventID = ?',
+                'SELECT * FROM EventAttendance WHERE EventID = ?',
                 [EventID]
             );
             db.query('UNLOCK TABLES');
@@ -138,11 +144,12 @@ const AttedanceModule = {
     },
 
     getAttendanceByID: async (AttendanceID) => {
+        let db;
         try {
-            const db = await pool.getConnection();
-            db.query('LOCK TABLES Attendance READ');
+            db = await pool.getConnection();
+            db.query('LOCK TABLES EventAttendance READ');
             const results = await db.query(
-                'SELECT * FROM Attendance WHERE AttendanceID = ?',
+                'SELECT * FROM EventAttendance WHERE AttendanceID = ?',
                 [AttendanceID]
             );
             db.query('UNLOCK TABLES');

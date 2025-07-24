@@ -140,7 +140,6 @@ export const StaffProfileModule = {
 // -------------------- STUDENT MODULE --------------------
 
 export const StudentProfileModule = {
-
     addStudentProfile: async (
         UserID,
         RollNo,
