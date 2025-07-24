@@ -17,10 +17,10 @@ import profileRoutes from './routes/ProfileRoutes.js';
 import eventRoutes from './routes/eventRoutes.js';
 import eventCoordRoutes from './routes/EventCoordRoutes.js';
 import expenseRoutes from './routes/ExpenseRoutes.js';
-import AdminRoutes from "./routes/AdminRoutes.js"
+import AdminRoutes from './routes/AdminRoutes.js';
 
 //Usage of routes
-app.use('/api',AdminRoutes);
+app.use('/api', AdminRoutes);
 app.use('/api', profileRoutes);
 app.use('/api', loginRoutes);
 app.use('/api', userRoutes);

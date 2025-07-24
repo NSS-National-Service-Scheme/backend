@@ -19,10 +19,9 @@ export const verifyToken = (req, res, next) => {
             UserID: user.UserID,
             Username: user.Username,
             userType: user.userType,
-            userTypeID: user.userTypeID
+            userTypeID: user.userTypeID,
         };
 
         next();
     });
 };
-

@@ -1,4 +1,4 @@
-export const validateStaffData = (MobileNo,Email) =>{
+export const validateStaffData = (MobileNo, Email) => {
     if (!MobileNo || !Email) {
         return 'All fields are required';
     }
@@ -12,18 +12,40 @@ export const validateStaffData = (MobileNo,Email) =>{
     }
 
     return null;
-}
+};
 
-
-export const validateStudentData = (RollNo,Name,Sex,Community,Aadhar,Minority_Community,
-                    SchoolID,DeptID,MobileNo,YearOfAdmission,Branch,PersonalEmail
-                    ,GaurdianName,HostelOrDayScholar) => {
-    
-    if (!RollNo || !Name || !Sex
-        || !Community || !Aadhar || !Minority_Community
-        || !SchoolID || !DeptID || !MobileNo || !YearOfAdmission
-        || !Branch || !PersonalEmail || !GaurdianName || !HostelOrDayScholar) {
-
+export const validateStudentData = (
+    RollNo,
+    Name,
+    Sex,
+    Community,
+    Aadhar,
+    Minority_Community,
+    SchoolID,
+    DeptID,
+    MobileNo,
+    YearOfAdmission,
+    Branch,
+    PersonalEmail,
+    GaurdianName,
+    HostelOrDayScholar
+) => {
+    if (
+        !RollNo ||
+        !Name ||
+        !Sex ||
+        !Community ||
+        !Aadhar ||
+        !Minority_Community ||
+        !SchoolID ||
+        !DeptID ||
+        !MobileNo ||
+        !YearOfAdmission ||
+        !Branch ||
+        !PersonalEmail ||
+        !GaurdianName ||
+        !HostelOrDayScholar
+    ) {
         return 'All fields are required';
     }
 
@@ -59,7 +81,5 @@ export const validateStudentData = (RollNo,Name,Sex,Community,Aadhar,Minority_Co
         return 'Name can only contain letters and spaces';
     }
 
-
-    return null; 
-
-}
+    return null;
+};

@@ -3,12 +3,17 @@ import ExpenseModule from '../modules/ExpenseModule.js';
 const ExpenseController = {
     addExpense: async (req, res) => {
         try {
-            const { EventID, Amount, Description ,ImageURL } = req.body;
+            const { EventID, Amount, Description, ImageURL } = req.body;
             EventID = EventID.trim();
             Amount = Amount.trim();
             Description = Description.trim();
             ImageURL = ImageURL.trim();
-            const validationError = validateExpense(EventID, Amount, Description, ImageURL);
+            const validationError = validateExpense(
+                EventID,
+                Amount,
+                Description,
+                ImageURL
+            );
 
             if (validationError) {
                 const response = setResponseBadRequest(validationError);
@@ -17,10 +22,13 @@ const ExpenseController = {
                     .json(response.responseBody);
             }
 
-            const results = await ExpenseModule.addExpense(EventID, Amount, Description, ImageURL);
-            return res
-                .status(results.responseCode)
-                .json(results.responseBody);
+            const results = await ExpenseModule.addExpense(
+                EventID,
+                Amount,
+                Description,
+                ImageURL
+            );
+            return res.status(results.responseCode).json(results.responseBody);
         } catch (error) {
             const response = setResponseInternalError(error);
             return res
@@ -31,11 +39,16 @@ const ExpenseController = {
 
     updateExpense: async (req, res) => {
         try {
-            const { ExpenseID, EventID, Amount, Description, ImageURL } = req.body;
-            const results = await ExpenseModule.updateExpense(ExpenseID, EventID, Amount, Description, ImageURL);
-            return res
-                .status(results.responseCode)
-                .json(results.responseBody);
+            const { ExpenseID, EventID, Amount, Description, ImageURL } =
+                req.body;
+            const results = await ExpenseModule.updateExpense(
+                ExpenseID,
+                EventID,
+                Amount,
+                Description,
+                ImageURL
+            );
+            return res.status(results.responseCode).json(results.responseBody);
         } catch (error) {
             const response = setResponseInternalError(error);
             return res
@@ -48,9 +61,7 @@ const ExpenseController = {
         try {
             const { ExpenseID } = req.body;
             const results = await ExpenseModule.deleteExpense(ExpenseID);
-            return res
-                .status(results.responseCode)
-                .json(results.responseBody);
+            return res.status(results.responseCode).json(results.responseBody);
         } catch (error) {
             const response = setResponseInternalError(error);
             return res
@@ -63,9 +74,7 @@ const ExpenseController = {
         try {
             const { EventID } = req.body;
             const results = await ExpenseModule.getExpensesByEvent(EventID);
-            return res
-                .status(results.responseCode)
-                .json(results.responseBody);
+            return res.status(results.responseCode).json(results.responseBody);
         } catch (error) {
             const response = setResponseInternalError(error);
             return res
@@ -78,9 +87,7 @@ const ExpenseController = {
         try {
             const { ExpenseID } = req.body;
             const results = await ExpenseModule.getExpenseById(ExpenseID);
-            return res
-                .status(results.responseCode)
-                .json(results.responseBody);
+            return res.status(results.responseCode).json(results.responseBody);
         } catch (error) {
             const response = setResponseInternalError(error);
             return res
@@ -88,11 +95,6 @@ const ExpenseController = {
                 .json(response.responseBody);
         }
     },
-}
+};
 
 export default ExpenseController;
-
-
-
-
-            

@@ -3,7 +3,10 @@ const ExpenseModule = {
         const db = await pool.getConnection();
         try {
             await db.query('LOCK TABLES Expenses WRITE, Events READ');
-            const [results] = await db.query('SELECT * FROM Events WHERE EventID = ?', [EventID]);
+            const [results] = await db.query(
+                'SELECT * FROM Events WHERE EventID = ?',
+                [EventID]
+            );
             if (results.length === 0) {
                 return setResponseBadRequest('Event not found');
             }
@@ -21,15 +24,24 @@ const ExpenseModule = {
         }
     },
 
-    updateExpense: async (ExpenseID, EventID, Amount, Description, ImageURL) => {
+    updateExpense: async (
+        ExpenseID,
+        EventID,
+        Amount,
+        Description,
+        ImageURL
+    ) => {
         const db = await pool.getConnection();
         try {
             await db.query('LOCK TABLES Expenses WRITE, Events READ');
-            const [results] = await db.query('SELECT * FROM Expenses WHERE ExpenseID = ?', [ExpenseID]);
+            const [results] = await db.query(
+                'SELECT * FROM Expenses WHERE ExpenseID = ?',
+                [ExpenseID]
+            );
             if (results.length === 0) {
                 return setResponseBadRequest('Expense not found');
             }
-            
+
             const fields = [];
             const values = [];
 
@@ -59,7 +71,7 @@ const ExpenseModule = {
 
             values.push(ExpenseID);
             const query = `UPDATE Expenses SET ${fields.join(', ')} WHERE ExpenseID = ?`;
-            const result =  await db.query(query, values);
+            const result = await db.query(query, values);
             await db.query('UNLOCK TABLES');
             return setResponseOk('Expense updated successfully', result);
         } catch (error) {
@@ -74,7 +86,10 @@ const ExpenseModule = {
         const db = await pool.getConnection();
         try {
             await db.query('LOCK TABLES Expenses WRITE');
-            const [results] = await db.query('DELETE FROM Expenses WHERE ExpenseID = ?', [ExpenseID]);
+            const [results] = await db.query(
+                'DELETE FROM Expenses WHERE ExpenseID = ?',
+                [ExpenseID]
+            );
             if (results.affectedRows === 0) {
                 return setResponseBadRequest('Expense not found');
             }
@@ -91,7 +106,10 @@ const ExpenseModule = {
     getExpenseById: async (ExpenseID) => {
         const db = await pool.getConnection();
         try {
-            const [results] = await db.query('SELECT * FROM Expenses WHERE ExpenseID = ?', [ExpenseID]);
+            const [results] = await db.query(
+                'SELECT * FROM Expenses WHERE ExpenseID = ?',
+                [ExpenseID]
+            );
             if (results.length === 0) {
                 return setResponseBadRequest('Expense not found');
             }
@@ -106,9 +124,14 @@ const ExpenseModule = {
     getAllExpenses: async (EventID) => {
         const db = await pool.getConnection();
         try {
-            const [results] = await db.query('SELECT * FROM Expenses WHERE EventID = ?', [EventID]);
+            const [results] = await db.query(
+                'SELECT * FROM Expenses WHERE EventID = ?',
+                [EventID]
+            );
             if (results.length === 0) {
-                return setResponseBadRequest('No expenses found for this event');
+                return setResponseBadRequest(
+                    'No expenses found for this event'
+                );
             }
             return setResponseOk('Expenses retrieved successfully', results);
         } catch (error) {
@@ -116,7 +139,7 @@ const ExpenseModule = {
         } finally {
             db.release();
         }
-    }
-}
+    },
+};
 
 export default ExpenseModule;
