@@ -140,6 +140,7 @@ export const StaffProfileModule = {
 // -------------------- STUDENT MODULE --------------------
 
 export const StudentProfileModule = {
+
     addStudentProfile: async (
         UserID,
         RollNo,
@@ -169,7 +170,7 @@ export const StudentProfileModule = {
                 (UserID, RollNo, Name, Sex, Community, Aadhar, Minority_Community,
                 SchoolID, DeptID, MobileNo, YearOfAdmission, Branch, PersonalEmail,
                 GaurdianName, HostelOrDayScholar,DOB,Blood_Group,Address,ImageURL) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?)`,
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?,?)`,
                 [
                     UserID,
                     RollNo,

@@ -4,7 +4,7 @@ import authorizeRoles from '../utilites/auth/authorizeRoles.js';
 
 const AdminRouter = Router();
 
-AdminRouter.get('/getDepts',  AdminController.getDepts);
-AdminRouter.get('/getSchool',  AdminController.getSchools);
+AdminRouter.get('/getDepts', AdminController.getDepts);
+AdminRouter.get('/getSchool', AdminController.getSchools);
 
 export default AdminRouter;
