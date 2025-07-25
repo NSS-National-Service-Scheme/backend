@@ -2,23 +2,23 @@ import { Router } from 'express';
 import EventController from '../controller/EventCoordController.js';
 import authorizeRoles from '../utilites/auth/authorizeRoles.js';
 
-const eventCoordRouter = Router();
+const EventCoordRoutes = Router();
 
-eventCoordRouter.post(
+EventCoordRoutes.post(
     '/addEventCoordinator',
     EventController.addEventCoordinator
 );
-eventCoordRouter.put(
+EventCoordRoutes.put(
     '/updateEventCoordinator',
     EventController.updateEventCoordinator
 );
-eventCoordRouter.delete(
+EventCoordRoutes.delete(
     '/deleteEventCoordinator',
     EventController.deleteEventCoordinator
 );
-eventCoordRouter.get(
+EventCoordRoutes.get(
     '/getAllEventCoordinators',
     EventController.getAllEventCoordinators
 );
 
-export default eventCoordRouter;
+export default EventCoordRoutes;
