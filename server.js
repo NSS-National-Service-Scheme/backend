@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 import loginRoutes from './routes/loginRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import profileRoutes from './routes/ProfileRoutes.js';
-import EventRoutes from './routes/EventRoutes.js';
+import EventRoutes from './routes/ER.js';
 import EventCoordRoutes from './routes/EventCoordRoutes.js';
 import expenseRoutes from './routes/ExpenseRoutes.js';
 import AdminRoutes from './routes/AdminRoutes.js';
