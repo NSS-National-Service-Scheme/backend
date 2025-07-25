@@ -5,23 +5,19 @@ const EventRoutes = Router();
 
 EventRoutes.post(
     '/createEvent',
-    authorizeRoles(4),
     EventController.createEvent
 );
 EventRoutes.put('/updateEvent', authorizeRoles(4), EventController.updateEvent);
 EventRoutes.delete(
     '/deleteEvent',
-    authorizeRoles(4),
     EventController.deleteEvent
 );
 EventRoutes.get(
     '/getEventbyID',
-    authorizeRoles(4),
     EventController.getEventById
 );
 EventRoutes.get(
     '/getAllEvents',
-    authorizeRoles(4),
     EventController.getAllEvents
 );
 
