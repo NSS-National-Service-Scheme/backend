@@ -10,10 +10,11 @@ import {
     validateStaffData,
     validateStudentData,
 } from '../utilites/dataValidator/Profile.js';
-import { encrypt } from '../utilites/encryption.js';
+import { encrypt  } from '../utilites/encryption.js';
 import { uploadImage } from '../utilites/cloudinary.js';
 const ProfileController = {
     addProfile: async (req, res) => {
+        console.log(req.jwt);
         const userType = req.jwt.RoleID === 2 ? 'staff' : 'student';
 
         if (userType === 'staff') {

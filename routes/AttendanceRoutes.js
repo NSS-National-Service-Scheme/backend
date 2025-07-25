@@ -6,28 +6,32 @@ const AttendanceRoutes = Router();
 
 AttendanceRoutes.post(
     '/addAttendance',
+    authorizeRoles(4),
     AttendanceController.addAttendance
 );
 AttendanceRoutes.put(
     '/updateAttendance/:AttendanceID',
-
+    authorizeRoles(4),
     AttendanceController.updateAttendanceByID
 );
 AttendanceRoutes.delete(
     '/deleteAttendance/:AttendanceID',
-    authorizeRoles,
+    authorizeRoles(4),
     AttendanceController.deleteAttendanceByID
 );
 AttendanceRoutes.get(
     '/getAttendanceByID/:AttendanceID',
+    authorizeRoles(4),
     AttendanceController.getAttendanceByID
 );
 AttendanceRoutes.get(
     '/getAttendanceByEventID/:EventID',
+    authorizeRoles(4),
     AttendanceController.getAttendanceByEventID
 );
 AttendanceRoutes.delete(
     '/deleteEventAttendance/:EventID',
+    authorizeRoles(4),
     AttendanceController.deleteEventAttendance
 );
 
