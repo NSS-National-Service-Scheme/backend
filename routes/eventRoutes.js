@@ -7,7 +7,7 @@ EventRoutes.post(
     '/createEvent',
     EventController.createEvent
 );
-EventRoutes.put('/updateEvent', authorizeRoles(4), EventController.updateEvent);
+EventRoutes.put('/updateEvent', EventController.updateEvent);
 EventRoutes.delete(
     '/deleteEvent',
     EventController.deleteEvent
