@@ -23,7 +23,22 @@ const EventsModule = {
     ) => {
         const db = await pool.getConnection();
         try {
+            console.log("Here", Event_Name, Event_hours, Event_Type, Event_Date, Event_Time, Event_Venue, EventDescription, Status, PosterURL, Registration, InstructionSet);
             await db.query('LOCK TABLES Events WRITE');
+            console.log('INSERT INTO Events (Event_Name, Event_hours, Event_Type, Event_Date, Event_Time, Event_Venue, EventDescription, Status, PosterURL, Registration, InstructionSet) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [
+                    Event_Name,
+                    Event_hours,
+                    Event_Type,
+                    Event_Date,
+                    Event_Time,
+                    Event_Venue,
+                    EventDescription,
+                    Status,
+                    PosterURL,
+                    Registration,
+                    InstructionSet,
+                ]);
             const results = await db.query(
                 'INSERT INTO Events (Event_Name, Event_hours, Event_Type, Event_Date, Event_Time, Event_Venue, EventDescription, Status, PosterURL, Registration, InstructionSet) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [
@@ -40,10 +55,10 @@ const EventsModule = {
                     InstructionSet,
                 ]
             );
-
             await db.query('UNLOCK TABLES');
             return setResponseOk('Event Added Succefully', results);
         } catch (error) {
+            console.log("error:",error);
             await db.query('UNLOCK TABLES');
             return setResponseInternalError({ error: 'Failed to add event' });
         } finally {

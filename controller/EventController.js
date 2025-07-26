@@ -5,6 +5,7 @@ import {
     setResponseOk,
     setResponseInternalError,
 } from '../utilites/response.js';
+import { uploadImage } from '../utilites/cloudinary.js';
 const EventController = {
     createEvent: async (req, res) => {
         try {
@@ -17,7 +18,7 @@ const EventController = {
                 Event_Venue,
                 EventDescription,
                 Status,
-                PosterURL,
+                Poster,
                 Registration,
                 InstructionSet,
             } = req.body;
@@ -29,7 +30,19 @@ const EventController = {
                     .status(response.responseCode)
                     .json(response.responseBody);
             }
-
+            let PosterURL = '';
+            if (Poster) {
+                try {
+                    PosterURL = await uploadImage(Poster);
+                } catch (err) {
+                    const response = setResponseInternalError({
+                        error: 'Image upload failed',
+                    });
+                    return res
+                        .status(response.responseCode)
+                        .json(response.responseBody);
+                }
+            }
             const results = await EventsModule.addEvent(
                 Event_Name,
                 Event_hours,
