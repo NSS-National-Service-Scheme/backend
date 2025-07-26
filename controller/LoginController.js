@@ -10,7 +10,7 @@ const LoginController = {
     login: async (req, res) => {
         try {
             const { username, password } = req.body;
-
+            console.log('Received request to login:', req.body);
             const validationError = validateLoginData(username, password);
             if (validationError) {
                 const response = setResponseBadRequest(validationError);
