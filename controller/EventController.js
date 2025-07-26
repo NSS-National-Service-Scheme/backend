@@ -8,6 +8,7 @@ import {
 import { uploadImage } from '../utilites/cloudinary.js';
 const EventController = {
     createEvent: async (req, res) => {
+        console.log(req.body);
         try {
             const {
                 Event_Name,
