@@ -5,66 +5,64 @@ import {
     setResponseOk,
     setResponseInternalError,
 } from '../utilites/response.js';
-import { uploadImage } from '../utilites/cloudinary.js';
+import { uploadImageBuffer } from '../utilites/cloudinary.js';
 const EventController = {
-    createEvent: async (req, res) => {
-        console.log(req.body);
-        try {
-            const {
-                Event_Name,
-                Event_hours,
-                Event_Type,
-                Event_Date,
-                Event_Time,
-                Event_Venue,
-                EventDescription,
-                Status,
-                Poster,
-                Registration,
-                InstructionSet,
-            } = req.body;
-            const validationError = validateEventdata(Event_Name);
+   createEvent: async (req, res) => {
+    // console.log both body and file:
+    console.log('BODY:', req.body);
+    console.log('FILE:', req.file);
+    try {
+      const {
+        Event_Name,
+        Event_hours,
+        Event_Type,
+        Event_Date,
+        Event_Time,
+        Event_Venue,
+        EventDescription,
+        Status,
+        Registration,
+        InstructionSet,
+      } = req.body;
 
-            if (validationError) {
-                const response = setResponseBadRequest(validationError);
-                return res
-                    .status(response.responseCode)
-                    .json(response.responseBody);
-            }
-            let PosterURL = '';
-            if (Poster) {
-                try {
-                    PosterURL = await uploadImage(Poster);
-                } catch (err) {
-                    const response = setResponseInternalError({
-                        error: 'Image upload failed',
-                    });
-                    return res
-                        .status(response.responseCode)
-                        .json(response.responseBody);
-                }
-            }
-            const results = await EventsModule.addEvent(
-                Event_Name,
-                Event_hours,
-                Event_Type,
-                Event_Date,
-                Event_Time,
-                Event_Venue,
-                EventDescription,
-                Status,
-                PosterURL,
-                Registration,
-                InstructionSet
-            );
-            return res.status(results.responseCode).json(results.responseBody);
-        } catch (error) {
-            const response = setResponseInternalError({ error: error.message });
-            return res
-                .status(response.responseCode)
-                .json(response.responseBody);
+      const validationError = validateEventdata(Event_Name);
+      if (validationError) {
+        const response = setResponseBadRequest(validationError);
+        return res.status(response.responseCode).json(response.responseBody);
+      }
+
+      // -------- File Upload Handling ----------
+      let PosterURL = '';
+      if (req.file) {
+        try {
+          PosterURL = await uploadImageBuffer(req.file.buffer, req.file.originalname);
+        } catch (err) {
+          const response = setResponseInternalError({
+            error: 'Image upload failed',
+          });
+          return res.status(response.responseCode).json(response.responseBody);
         }
-    },
+      }
+
+      const results = await EventsModule.addEvent(
+        Event_Name,
+        Event_hours,
+        Event_Type,
+        Event_Date,
+        Event_Time,
+        Event_Venue,
+        EventDescription,
+        Status,
+        PosterURL,
+        Registration,
+        InstructionSet
+      );
+      return res.status(results.responseCode).json(results.responseBody);
+    } catch (error) {
+      const response = setResponseInternalError({ error: error.message });
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+  },
 
     updateEvent: async (req, res) => {
         try {

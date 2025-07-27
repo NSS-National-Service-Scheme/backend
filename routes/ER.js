@@ -1,13 +1,12 @@
 import { Router } from 'express';
 import EventController from '../controller/EventController.js';
 import authorizeRoles from '../utilites/auth/authorizeRoles.js';
+import multer from 'multer';
+const upload = multer({ storage: multer.memoryStorage() });
 const EventRoutes = Router();
 
-EventRoutes.post(
-    '/createEvent',
-    authorizeRoles(4),
-    EventController.createEvent
-);
+EventRoutes.post('/createEvent', upload.single('Poster'), EventController.createEvent);
+
 EventRoutes.put('/updateEvent', EventController.updateEvent);
 EventRoutes.delete(
     '/deleteEvent',
