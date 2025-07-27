@@ -6,10 +6,8 @@ import appConfig from './utilites/config.js';
 const app = express();
 
 
-app.use(cors({
-  origin: "http://localhost:3000", // allow your frontend
-  credentials: true // allow cookies if you're using them
-}));
+app.use(cors());
+app.use(express.static('public'));
 
 app.use(express.json());
 app.use(cookieParser());
