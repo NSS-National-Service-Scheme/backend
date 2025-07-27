@@ -43,7 +43,8 @@ const EventController = {
           return res.status(response.responseCode).json(response.responseBody);
         }
       }
-
+      console.log("posterURL:",PosterURL);
+      console.log('About to add event');
       const results = await EventsModule.addEvent(
         Event_Name,
         Event_hours,
@@ -59,6 +60,7 @@ const EventController = {
       );
       return res.status(results.responseCode).json(results.responseBody);
     } catch (error) {
+        console.log(error);
       const response = setResponseInternalError({ error: error.message });
       return res.status(response.responseCode).json(response.responseBody);
     }
