@@ -24,12 +24,13 @@ const EventController = {
         Registration,
         InstructionSet,
       } = req.body;
-
+      console.log("Here");
       const validationError = validateEventdata(Event_Name);
       if (validationError) {
         const response = setResponseBadRequest(validationError);
         return res.status(response.responseCode).json(response.responseBody);
       }
+      console.log("Not Herre");
 
       // -------- File Upload Handling ----------
       let PosterURL = '';
@@ -37,6 +38,7 @@ const EventController = {
         try {
           PosterURL = await uploadImageBuffer(req.file.buffer, req.file.originalname);
         } catch (err) {
+          console.error("Cloudinary upload failed:", err); 
           const response = setResponseInternalError({
             error: 'Image upload failed',
           });
@@ -51,7 +53,7 @@ const EventController = {
         Event_Type,
         Event_Date,
         Event_Time,
-        Event_Venue,
+        Event_Venue,    
         EventDescription,
         Status,
         PosterURL,
