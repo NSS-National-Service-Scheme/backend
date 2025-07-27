@@ -1,6 +1,6 @@
 import validateExpense from '../utilites/dataValidator/expense.js';
 import ExpenseModule from '../modules/ExpenseModule.js';
-import { uploadImage } from '../utilites/cloudinary.js';
+import { uploadImageBuffer } from '../utilites/cloudinary.js';
 
 import {
     setResponseInternalError,

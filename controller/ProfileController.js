@@ -11,7 +11,7 @@ import {
     validateStudentData,
 } from '../utilites/dataValidator/Profile.js';
 import { encrypt  } from '../utilites/encryption.js';
-import { uploadImage } from '../utilites/cloudinary.js';
+import { uploadImageBuffer } from '../utilites/cloudinary.js';
 const ProfileController = {
     addProfile: async (req, res) => {
         console.log(req.jwt);
