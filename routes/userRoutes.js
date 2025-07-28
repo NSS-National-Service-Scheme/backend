@@ -8,5 +8,5 @@ userRouter.put('/updateUser/:id',authorizeRoles(3),  UserController.updateUser);
 userRouter.get('/getallUser', authorizeRoles(3), UserController.getAllUsers);
 userRouter.get('/getUser/:id',authorizeRoles(3),  UserController.getUserById);
 userRouter.delete('/deleteUser/:id',authorizeRoles(3),UserController.deleteUser);
-userRouter.post('/IsActive',authorizeRoles(5),  UserController.isActiveUser);
+userRouter.post('/IsActive/:UserId',authorizeRoles(5),  UserController.isActiveUser);
 export default userRouter;

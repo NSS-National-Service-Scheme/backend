@@ -14,7 +14,7 @@ EventRoutes.delete(
     EventController.deleteEvent
 );
 EventRoutes.get(
-    '/getEventbyID',
+    '/getEventbyID/:eventID',
     authorizeRoles(4),
     EventController.getEventById
 );

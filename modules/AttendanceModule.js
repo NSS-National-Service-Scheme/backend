@@ -6,25 +6,42 @@ import {
 } from '../utilites/response.js';
 import { validateNewAttendanceData } from '../utilites/dataValidator/Attendance.js';
 const AttedanceModule = {
-    addAttedance: async (EventID, StudentID, Status) => {
-        let db;
-        try {
-            db = await pool.getConnection();
-            db.query('LOCK TABLES EventAttendance WRITE');
-            const query =
-                'INSERT INTO EventAttendance (EventID, StudentID, Status) VALUES (?, ?, ?)';
-            const results = await db.query(query, [EventID, StudentID, Status]);
-            db.query('UNLOCK TABLES');
-            return setResponseOk('Attendance added successfully', results);
-        } catch (error) {
+    addAttedance: async (EventID, RollNo, Status) => {
+    let db;
+    try {
+        db = await pool.getConnection();
+        await db.query('LOCK TABLES EventAttendance WRITE, Student READ'); // ✅ Await
+
+        const [rows] = await db.query(
+            'SELECT StudentID FROM Student WHERE RollNo = ?',
+            [RollNo]
+        );
+
+        if (rows.length === 0) {
             await db.query('UNLOCK TABLES');
-            return setResponseInternalError({
-                error: 'Failed to add attendance',
-            });
-        } finally {
-            db.release();
+            return setResponseBadRequest("Student with this RollNo not found");
         }
-    },
+
+        const StudentID = rows[0].StudentID;
+        console.log('StudentID:', StudentID);
+
+        const insertQuery =
+            'INSERT INTO EventAttendance (EventID, StudentID, Status) VALUES (?, ?, ?)';
+        const [results] = await db.query(insertQuery, [EventID, StudentID, Status]);
+
+        await db.query('UNLOCK TABLES'); // ✅ Await
+        return setResponseOk('Attendance added successfully', results);
+
+    } catch (error) {
+        if (db) await db.query('UNLOCK TABLES'); // ✅ Safe check
+        return setResponseInternalError({
+            error: error.message || 'Failed to add attendance',
+        });
+    } finally {
+        if (db) db.release(); // ✅ Safe check
+    }
+},
+
 
     deleteAttendanceByID: async (AttendanceID) => {
         let db;
@@ -120,7 +137,7 @@ const AttedanceModule = {
             db = await pool.getConnection();
             db.query('LOCK TABLES EventAttendance READ');
             const results = await db.query(
-                'SELECT * FROM EventAttendance WHERE EventID = ?',
+                'SELECT E.AttendanceID, E.EventID, E.StudentID, E.Status, S.RollNo FROM EventAttendance E JOIN Student S ON S.StudentID = E.StudentID WHERE E.EventID = ?; ',
                 [EventID]
             );
             db.query('UNLOCK TABLES');

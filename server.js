@@ -23,6 +23,7 @@ import expenseRoutes from './routes/ExpenseRoutes.js';
 import AdminRoutes from './routes/AdminRoutes.js';
 import AttendanceRoutes from './routes/AttendanceRoutes.js';
 import expenseRouter from './routes/ExpenseRoutes.js';
+import  WorkingHoursRoutes from './routes/WorkingHoursRoutes.js'
 
 //Usage of routes
 app.use('/api', AdminRoutes);
@@ -34,6 +35,7 @@ app.use('/api', EventCoordRoutes);
 app.use('/api', expenseRoutes);
 app.use('/api', AttendanceRoutes);
 app.use('/api', expenseRouter);
+app.use('/api', WorkingHoursRoutes);
 
 app.listen(appConfig.PORT, () => {
     console.log(`Server is running on port ${appConfig.PORT}`);

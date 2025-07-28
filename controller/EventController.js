@@ -122,7 +122,7 @@ const EventController = {
 
     getEventById: async (req, res) => {
         try {
-            const { EventID } = req.body;
+            const EventID  = req.params.eventID;
             const results = await EventsModule.getEventById(EventID);
             return res.status(results.responseCode).json(results.responseBody);
         } catch (error) {

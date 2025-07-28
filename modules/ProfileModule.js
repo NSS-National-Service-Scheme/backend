@@ -5,7 +5,7 @@ import {
     setResponseOk,
     setResponseBadRequest,
 } from '../utilites/response.js';
-import { decrypt } from '../utilites/encryption.js';
+import { encrypt , decrypt } from '../utilites/encryption.js';
 
 export const StaffProfileModule = {
     addStaffProfile: async (UserID, MobileNo, Email) => {
@@ -18,8 +18,8 @@ export const StaffProfileModule = {
             );
             await db.query('UNLOCK TABLES');
 
-            await db.query('Lock Table User WRITE');
-            db.query('UPDATE User SET isActive = TRUE WHERE UserID = ?', [
+            await db.query('LOCK TABLES User WRITE');
+            await db.query('UPDATE User SET isActive = TRUE WHERE UserID = ?', [
                 UserID,
             ]);
             await db.query('UNLOCK TABLES');
@@ -49,9 +49,7 @@ export const StaffProfileModule = {
             }
 
             if (fields.length === 0) {
-                return setResponseInternalError({
-                    error: 'No valid fields to update.',
-                });
+                return setResponseBadRequest('No valid fields to update.');
             }
 
             values.push(UserID);
@@ -75,7 +73,6 @@ export const StaffProfileModule = {
         const db = await pool.getConnection();
         try {
             await db.query('LOCK TABLES Staff WRITE');
-            console.log(UserID);
             const [results] = await db.query(
                 'DELETE FROM Staff WHERE UserID = ?',
                 [UserID]
@@ -109,7 +106,7 @@ export const StaffProfileModule = {
                 return setResponseBadRequest('Staff profile not found.');
             }
 
-            return setResponseOk('Staff profile fetched successfully', results);
+            return setResponseOk('Staff profile fetched successfully', results[0]);
         } catch (error) {
             await db.query('UNLOCK TABLES');
             return setResponseInternalError({ error: error.message });
@@ -118,6 +115,7 @@ export const StaffProfileModule = {
         }
     },
 
+    // FIXED: Method name should match what's called in controller
     getAllStaffProfiles: async () => {
         const db = await pool.getConnection();
         try {
@@ -136,8 +134,6 @@ export const StaffProfileModule = {
         }
     },
 };
-
-// -------------------- STUDENT MODULE --------------------
 
 export const StudentProfileModule = {
     addStudentProfile: async (
@@ -193,8 +189,8 @@ export const StudentProfileModule = {
                 ]
             );
             await db.query('UNLOCK TABLES');
-            await db.query('Lock Table User WRITE');
-            db.query('UPDATE User SET isActive = TRUE WHERE UserID = ?', [
+            await db.query('LOCK TABLES User WRITE');
+            await db.query('UPDATE User SET isActive = TRUE WHERE UserID = ?', [
                 UserID,
             ]);
             await db.query('UNLOCK TABLES');
@@ -222,7 +218,11 @@ export const StudentProfileModule = {
         Branch,
         PersonalEmail,
         GaurdianName,
-        HostelOrDayScholar
+        HostelOrDayScholar,
+        DOB,
+        Blood_Group,
+        Address,
+        ImageURL
     ) => {
         const db = await pool.getConnection();
         try {
@@ -243,15 +243,15 @@ export const StudentProfileModule = {
             }
             if (Community !== undefined) {
                 fields.push('Community = ?');
-                values.push(Community);
+                values.push(encrypt(Community));
             }
             if (Aadhar !== undefined) {
                 fields.push('Aadhar = ?');
-                values.push(Aadhar);
+                values.push(encrypt(Aadhar));
             }
             if (Minority_Community !== undefined) {
                 fields.push('Minority_Community = ?');
-                values.push(Minority_Community);
+                values.push(encrypt(Minority_Community));
             }
             if (SchoolID !== undefined) {
                 fields.push('SchoolID = ?');
@@ -263,7 +263,7 @@ export const StudentProfileModule = {
             }
             if (MobileNo !== undefined) {
                 fields.push('MobileNo = ?');
-                values.push(MobileNo);
+                values.push(encrypt(MobileNo));
             }
             if (YearOfAdmission !== undefined) {
                 fields.push('YearOfAdmission = ?');
@@ -306,7 +306,6 @@ export const StudentProfileModule = {
                 return setResponseBadRequest('No fields provided for update.');
             }
 
-            fields.push('UpdatedAt = NOW()');
             values.push(UserID);
 
             await db.query('LOCK TABLES Student WRITE');
@@ -321,6 +320,7 @@ export const StudentProfileModule = {
                 results
             );
         } catch (error) {
+            console.error(error);
             await db.query('UNLOCK TABLES');
             return setResponseInternalError({ error: error.message });
         } finally {
@@ -331,7 +331,6 @@ export const StudentProfileModule = {
     deleteStudentProfile: async (UserID) => {
         const db = await pool.getConnection();
         try {
-            console.log(UserID);
             await db.query('LOCK TABLES Student WRITE');
             const [results] = await db.query(
                 'DELETE FROM Student WHERE UserID = ?',
@@ -371,11 +370,17 @@ export const StudentProfileModule = {
 
             const student = results[0];
 
-            // Decrypt sensitive fields
-            student.Community = decrypt(student.Community);
-            student.Aadhar = decrypt(student.Aadhar);
-            student.Minority_Community = decrypt(student.Minority_Community);
-            student.MobileNo = decrypt(student.MobileNo);
+            // Decrypt sensitive fields - Add error handling for decryption
+            try {
+                student.Community = decrypt(student.Community);
+                student.Aadhar = decrypt(student.Aadhar);
+                student.Minority_Community = decrypt(student.Minority_Community);
+                student.MobileNo = decrypt(student.MobileNo);
+                console.log(student);
+            } catch (decryptError) {
+                console.error('Decryption error:', decryptError);
+                return setResponseInternalError({ error: 'Failed to decrypt sensitive data' });
+            }
 
             return setResponseOk(
                 'Student profile fetched successfully',
@@ -389,20 +394,30 @@ export const StudentProfileModule = {
         }
     },
 
+    // FIXED: Method name should match what's called in controller
     getAllStudentProfiles: async () => {
         const db = await pool.getConnection();
         try {
             await db.query('LOCK TABLES Student READ');
             const [results] = await db.query('SELECT * FROM Student');
+            console.log(results);
             await db.query('UNLOCK TABLES');
 
-            const decryptedResults = results.map((student) => ({
-                ...student,
-                Community: decrypt(student.Community),
-                Aadhar: decrypt(student.Aadhar),
-                Minority_Community: decrypt(student.Minority_Community),
-                MobileNo: decrypt(student.MobileNo),
-            }));
+            const decryptedResults = results.map((student) => {
+                try {
+                    return {
+                        ...student,
+                        Community: decrypt(student.Community),
+                        Aadhar: decrypt(student.Aadhar),
+                        Minority_Community: decrypt(student.Minority_Community),
+                        MobileNo: decrypt(student.MobileNo),
+                    };
+                } catch (decryptError) {
+                    console.error('Decryption error for student:', student.UserID, decryptError);
+                    // Return student with original encrypted data if decryption fails
+                    return student;
+                }
+            });
 
             return setResponseOk(
                 'All student profiles fetched successfully',

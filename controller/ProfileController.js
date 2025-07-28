@@ -10,8 +10,9 @@ import {
     validateStaffData,
     validateStudentData,
 } from '../utilites/dataValidator/Profile.js';
-import { encrypt  } from '../utilites/encryption.js';
+import { encrypt } from '../utilites/encryption.js';
 import { uploadImageBuffer } from '../utilites/cloudinary.js';
+
 const ProfileController = {
     addProfile: async (req, res) => {
         console.log(req.jwt);
@@ -49,6 +50,8 @@ const ProfileController = {
             }
         } else {
             try {
+                console.log('BODY:', req.body);
+                console.log('FILE:', req.file);
                 let {
                     RollNo,
                     Name,
@@ -66,9 +69,22 @@ const ProfileController = {
                     HostelOrDayScholar,
                     DOB,
                     Blood_Group,
-                    Address,
-                    Image,
+                    Address
                 } = req.body;
+                
+                let ImageURL = '';
+                if (req.file) {
+                    try {
+                        ImageURL = await uploadImageBuffer(req.file.buffer, req.file.originalname);
+                    } catch (err) {
+                        console.error("Cloudinary upload failed:", err);
+                        const response = setResponseInternalError({
+                            error: 'Image upload failed',
+                        });
+                        return res.status(response.responseCode).json(response.responseBody);
+                    }
+                }
+                
                 RollNo = RollNo?.trim().toUpperCase();
                 Name = Name?.trim();
                 Sex = Sex?.trim();
@@ -86,20 +102,6 @@ const ProfileController = {
                 DOB = DOB?.trim();
                 Blood_Group = Blood_Group?.trim();
                 Address = Address?.trim();
-
-                let ImageURL = '';
-                if (Image) {
-                    try {
-                        ImageURL = await uploadImage(Image);
-                    } catch (err) {
-                        const response = setResponseInternalError({
-                            error: 'Image upload failed',
-                        });
-                        return res
-                            .status(response.responseCode)
-                            .json(response.responseBody);
-                    }
-                }
 
                 const validationError = validateStudentData(
                     RollNo,
@@ -128,6 +130,7 @@ const ProfileController = {
                 Aadhar = encrypt(Aadhar);
                 Minority_Community = encrypt(Minority_Community);
                 MobileNo = encrypt(MobileNo);
+                
                 const response = await StudentProfileModule.addStudentProfile(
                     req.jwt.UserID,
                     RollNo,
@@ -181,6 +184,7 @@ const ProfileController = {
                     .status(response.responseCode)
                     .json(response.responseBody);
             } catch (error) {
+                console.log(error); 
                 const response = setResponseInternalError({
                     error: error.message,
                 });
@@ -190,16 +194,26 @@ const ProfileController = {
             }
         } else {
             try {
-                const updateData = { ...req.body };
-                const response =
-                    await StudentProfileModule.updateStudentByUserID(
-                        req.jwt.UserID,
-                        updateData
-                    );
+                // FIXED: Call the correct method name
+                const {
+                    RollNo, Name, Sex, Community, Aadhar, Minority_Community,
+                    SchoolID, DeptID, MobileNo, YearOfAdmission, Branch,
+                    PersonalEmail, GaurdianName, HostelOrDayScholar,
+                    DOB, Blood_Group, Address, ImageURL
+                } = req.body;
+
+                const response = await StudentProfileModule.updateStudentProfile(
+                    req.jwt.UserID,
+                    RollNo, Name, Sex, Community, Aadhar, Minority_Community,
+                    SchoolID, DeptID, MobileNo, YearOfAdmission, Branch,
+                    PersonalEmail, GaurdianName, HostelOrDayScholar,
+                    DOB, Blood_Group, Address, ImageURL
+                );
                 return res
                     .status(response.responseCode)
                     .json(response.responseBody);
             } catch (error) {
+                console.log(error);
                 const response = setResponseInternalError({
                     error: error.message,
                 });
@@ -250,7 +264,6 @@ const ProfileController = {
     deleteStaffProfile: async (req, res) => {
         try {
             const UserID = req.params.UserID;
-            console.log(UserID);
             const response =
                 await StaffProfileModule.deleteStaffProfile(UserID);
             return res
@@ -264,12 +277,14 @@ const ProfileController = {
         }
     },
 
+    // FIXED: Call correct method names
     getAllStudents: async (req, res) => {
         try {
-            const response = await StudentProfileModule.getAllStudents();
+            const response = await StudentProfileModule.getAllStudentProfiles();
             return res
                 .status(response.responseCode)
                 .json(response.responseBody);
+            console.log(response);
         } catch (error) {
             const response = setResponseInternalError({ error: error.message });
             return res
@@ -280,7 +295,7 @@ const ProfileController = {
 
     getAllStaffs: async (req, res) => {
         try {
-            const response = await StaffProfileModule.getAllStaffs();
+            const response = await StaffProfileModule.getAllStaffProfiles();
             return res
                 .status(response.responseCode)
                 .json(response.responseBody);

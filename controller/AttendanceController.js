@@ -9,27 +9,16 @@ import {
 const AttendanceController = {
     addAttendance: async (req, res) => {
         try {
-            const { EventID, StudentID, Status } = req.body;
-            const validationError = validateNewAttendanceData(
-                EventID,
-                StudentID,
-                Status
-            );
-            if (validationError) {
-                const response = setResponseBadRequest(validationError);
-                return res
-                    .status(response.responseCode)
-                    .json(response.responseBody);
-            }
+            const { EventID, RollNo, Status } = req.body;
             console.log('Entered');
             const result = await AttendanceModule.addAttedance(
                 EventID,
-                StudentID,
+                RollNo,
                 Status
             );
             return res.status(result.responseCode).json(result.responseBody);
         } catch (error) {
-            response = setResponseInternalError({ error: error.message });
+            const response = setResponseInternalError({ error: error.message });
             return res
                 .status(response.responseCode)
                 .json(response.responseBody);

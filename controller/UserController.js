@@ -103,7 +103,7 @@ const UserController = {
     isActiveUser: async (req, res) => {
         const userId = req.params.UserId;
         try {
-            const response = await UserModule.isActiveUser(userId);
+            const response = await UserModule.isActive(userId);
             return res
                 .status(response.responseCode)
                 .json(response.responseBody);

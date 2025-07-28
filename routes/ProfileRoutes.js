@@ -1,11 +1,14 @@
 import { Router } from 'express';
 import authorizeRoles from '../utilites/auth/authorizeRoles.js';
 import ProfileController from '../controller/ProfileController.js';
+import multer from 'multer';
+const upload = multer({ storage: multer.memoryStorage() });
 const profileRouter = Router();
 
 profileRouter.post(
     '/addProfile',
     authorizeRoles(5),
+    upload.single('DP'),
     ProfileController.addProfile
 );
 profileRouter.get(
@@ -16,6 +19,7 @@ profileRouter.get(
 profileRouter.put(
     '/updateProfile',
     authorizeRoles(5),
+    upload.single('DP'),
     ProfileController.updateProfile
 );
 profileRouter.delete(
