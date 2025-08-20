@@ -1,4 +1,5 @@
 import { availableParallelism } from 'os';
+
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -22,6 +23,11 @@ const appConfig = {
         },
     },
     JWTSecretKey: process.env.JWT_SECRET_KEY,
+    cloudinary: {
+        cloud_name: process.env.CLOUD_NAME,
+        api_key: process.env.CLOUD_API_KEY,
+        api_secret: process.env.CLOUD_API_SECRET,
+    },
 };
 
 export default appConfig;

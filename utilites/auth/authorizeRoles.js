@@ -1,4 +1,4 @@
-import pool  from '../../db/connectionPool.js';
+import pool from '../../db/connectionPool.js';
 import { verifyToken } from './Tokens.js'; // Make sure path is correct
 
 export default function authorizeRoles(access_id, event_id = null) {
